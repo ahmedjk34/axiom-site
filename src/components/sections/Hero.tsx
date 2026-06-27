@@ -8,7 +8,6 @@ import {
   useReducedMotion,
 } from "motion/react";
 import { NodeNetwork } from "../visuals/NodeNetwork";
-import { PerspectiveGrid } from "../visuals/PerspectiveGrid";
 import { AxiomMark } from "../ui/Logo";
 import { PrimaryCta, SecondaryLink } from "../ui/CtaButton";
 
@@ -34,12 +33,6 @@ export function Hero() {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const networkY = useTransform(scrollYProgress, [0, 1], [0, -120]);
-  const gridOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
-
-  // Brand watermark: held perfectly still (position: fixed) for the whole hero
-  // so it never slides or clips, then faded out just as the hero leaves so it
-  // doesn't bleed into the next section.
-  const markOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [0.09, 0.09, 0]);
 
   let wordIndex = 0;
 
@@ -57,27 +50,18 @@ export function Hero() {
         <NodeNetwork interactive density={1.25} intensity={1.35} />
       </motion.div>
 
-      {/* Layer 3: perspective grid floor */}
-      <motion.div
-        className="absolute inset-0"
-        style={reduce ? undefined : { opacity: gridOpacity }}
-      >
-        <PerspectiveGrid />
-      </motion.div>
-
-      {/* Layer 4: crisp line-mark watermark, offset to the right. Held fixed to
-          the viewport so it stays rock-steady (no slide, no clip) for the whole
-          hero, then fades out cleanly as the hero scrolls away. */}
-      <motion.div
-        className="pointer-events-none fixed right-[-6%] top-0 z-0 hidden h-[100svh] items-center lg:flex"
+      {/* Layer 4: Axiom brand watermark, offset to the right. Static — it sits
+          in place and scrolls naturally with the hero (no parallax, fade, or
+          pinning). */}
+      <div
+        className="pointer-events-none absolute right-[-6%] top-0 hidden h-full items-center lg:flex"
         aria-hidden="true"
-        style={{ opacity: markOpacity }}
       >
         <AxiomMark
-          className="h-[min(46vw,560px)] w-[min(46vw,560px)]"
+          className="h-[min(46vw,560px)] w-[min(46vw,560px)] opacity-[0.08]"
           pulse={false}
         />
-      </motion.div>
+      </div>
 
       {/* Layer 5: directional blue glow from top-right */}
       <div

@@ -36,6 +36,11 @@ export function Hero() {
   const networkY = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const gridOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
+  // Brand watermark: held perfectly still (position: fixed) for the whole hero
+  // so it never slides or clips, then faded out just as the hero leaves so it
+  // doesn't bleed into the next section.
+  const markOpacity = useTransform(scrollYProgress, [0, 0.82, 1], [0.09, 0.09, 0]);
+
   let wordIndex = 0;
 
   return (
@@ -60,16 +65,19 @@ export function Hero() {
         <PerspectiveGrid />
       </motion.div>
 
-      {/* Layer 4: crisp line-mark, offset to the right (not behind the text) */}
-      <div
-        className="pointer-events-none absolute right-[-6%] top-1/2 hidden -translate-y-1/2 lg:block"
+      {/* Layer 4: crisp line-mark watermark, offset to the right. Held fixed to
+          the viewport so it stays rock-steady (no slide, no clip) for the whole
+          hero, then fades out cleanly as the hero scrolls away. */}
+      <motion.div
+        className="pointer-events-none fixed right-[-6%] top-0 z-0 hidden h-[100svh] items-center lg:flex"
         aria-hidden="true"
+        style={{ opacity: markOpacity }}
       >
         <AxiomMark
-          className="h-[min(46vw,560px)] w-[min(46vw,560px)] opacity-[0.07]"
+          className="h-[min(46vw,560px)] w-[min(46vw,560px)]"
           pulse={false}
         />
-      </div>
+      </motion.div>
 
       {/* Layer 5: directional blue glow from top-right */}
       <div

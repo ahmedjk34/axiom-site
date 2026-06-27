@@ -132,26 +132,36 @@ export const PROCESS_STEPS = [
   {
     n: "01",
     name: "Understand",
+    phase: "Discovery",
+    produces: "Problem & workflow map",
     body: "We study the business problem, workflow, users, and goals before building anything.",
   },
   {
     n: "02",
     name: "Design",
+    phase: "Blueprint",
+    produces: "System architecture",
     body: "We shape the solution structure, features, user flows, and technical direction.",
   },
   {
     n: "03",
     name: "Build",
+    phase: "Development",
+    produces: "Working system",
     body: "We develop the software, AI tool, automation, or platform.",
   },
   {
     n: "04",
     name: "Launch",
+    phase: "Deployment",
+    produces: "System in production",
     body: "We test, deploy, refine, and prepare the system for real use.",
   },
   {
     n: "05",
     name: "Improve",
+    phase: "Iteration",
+    produces: "Continuous improvement",
     body: "We keep improving based on feedback, data, and changing business needs.",
   },
 ] as const;

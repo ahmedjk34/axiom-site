@@ -179,6 +179,21 @@ body {
   clip-path: polygon(0 0, 100% 0, 100% 65%, 65% 100%, 0 100%);
 }
 
+/* Bracket flash around an igniting process node */
+@keyframes bracket-flash {
+  0% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+}
+
 /* Bold filled primary CTA — electric blue with outer glow */
 .cta-primary {
   background-color: var(--color-accent);
@@ -339,6 +354,27 @@ body {
 }
 .pulse-travel {
   animation: pulse-travel 4.5s var(--ease-axiom) infinite;
+}
+
+/* Pipeline rail packet — travels the filled segment continuously */
+@keyframes pipeline-packet {
+  0% {
+    left: 0%;
+    opacity: 0.6;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0.6;
+  }
+}
+.pipeline-packet {
+  animation: pipeline-packet 2.8s var(--ease-axiom) infinite;
 }
 @keyframes pulse-travel-y {
   0% {

@@ -1,26 +1,24 @@
-"use client";
-
-import { useRef } from "react";
 import { Eyebrow } from "../ui/Eyebrow";
 import { Reveal } from "../ui/Reveal";
 import { SectionIndex } from "../ui/SectionIndex";
 import { ProjectDiagram } from "../visuals/ProjectDiagram";
 import { PROJECTS, type Project } from "@/lib/content";
 
-export function SelectedWork() {
-  const scrollerRef = useRef<HTMLDivElement>(null);
+const DIAGRAM_CAPTION: Record<Project["diagram"], string> = {
+  transformation: "Platform transformation",
+  commerce: "Commerce operations hub",
+  procurement: "Procurement pipeline",
+};
 
-  const scrollBy = (dir: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const amount = Math.min(el.clientWidth * 0.8, 480);
-    el.scrollBy({ left: amount * dir, behavior: "smooth" });
-  };
+export function SelectedWork() {
+  // Prospect Engine lives in the testimonial above — Work features the two
+  // distinct platforms.
+  const projects = PROJECTS.filter((p) => p.id !== "prospect-engine");
 
   return (
     <section
       id="work"
-      className="relative scroll-mt-24 overflow-hidden bg-bg-alt py-24 sm:py-32"
+      className="relative scroll-mt-24 overflow-hidden bg-bg-alt py-24 sm:py-28"
       aria-labelledby="work-heading"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8">
@@ -30,150 +28,139 @@ export function SelectedWork() {
           </Reveal>
           <SectionIndex n={5} />
         </div>
-
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <Reveal delay={0.05}>
-              <h2
-                id="work-heading"
-                className="font-display text-[clamp(2.1rem,4.6vw,3.6rem)] font-bold leading-[1.04] tracking-[-0.01em] text-text-primary text-balance"
-              >
-                Selected systems &amp; digital products.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-text-secondary">
-                Platforms built around operational complexity — where business
-                rules, payments, user roles, and workflows all need to work
-                together. We start with how the business actually works.
-              </p>
-            </Reveal>
-          </div>
-
-          <div className="hidden gap-2 md:flex">
-            <ScrollArrow direction="left" onClick={() => scrollBy(-1)} />
-            <ScrollArrow direction="right" onClick={() => scrollBy(1)} />
-          </div>
-        </div>
+        <Reveal delay={0.05}>
+          <h2
+            id="work-heading"
+            className="max-w-3xl font-display text-[clamp(2.1rem,4.6vw,3.6rem)] font-bold leading-[1.04] tracking-[-0.01em] text-text-primary text-balance"
+          >
+            Selected systems &amp; digital products.
+          </h2>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-text-secondary">
+            Platforms built around operational complexity — where business
+            rules, payments, user roles, and workflows all need to work
+            together.
+          </p>
+        </Reveal>
       </div>
 
-      <div
-        ref={scrollerRef}
-        className="mt-12 flex snap-x snap-mandatory flex-col gap-5 overflow-x-auto px-5 pb-4 sm:px-8 md:flex-row md:px-[max(2rem,calc((100vw-80rem)/2+2rem))] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {PROJECTS.map((project) => (
-          <WorkCard key={project.id} project={project} />
+      <div className="mt-20 flex flex-col">
+        {projects.map((project, i) => (
+          <FeatureRow
+            key={project.id}
+            project={project}
+            index={i + 1}
+            flip={i % 2 === 1}
+            showDivider={i > 0}
+          />
         ))}
       </div>
     </section>
   );
 }
 
-function ScrollArrow({
-  direction,
-  onClick,
+function FeatureRow({
+  project,
+  index,
+  flip,
+  showDivider,
 }: {
-  direction: "left" | "right";
-  onClick: () => void;
+  project: Project;
+  index: number;
+  flip: boolean;
+  showDivider: boolean;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={direction === "left" ? "Previous projects" : "Next projects"}
-      className="panel panel-hover flex h-11 w-11 items-center justify-center rounded-[8px] text-text-secondary hover:text-text-primary"
-    >
-      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden="true">
-        <path
-          d={direction === "left" ? "M15 6l-6 6 6 6" : "M9 6l6 6-6 6"}
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </button>
-  );
-}
-
-function WorkCard({ project }: { project: Project }) {
-  return (
-    <Reveal
-      as="div"
-      className="w-[86vw] shrink-0 snap-start sm:w-[78vw] md:w-[460px]"
-    >
-      <article className="panel panel-hover group relative flex h-full flex-col overflow-hidden rounded-[8px]">
-        {/* blade accent (brightens on hover) */}
-        <span className="pointer-events-none absolute right-0 top-0 z-10 h-0 w-0 border-l-[22px] border-t-[22px] border-l-transparent border-t-accent opacity-30 transition-opacity duration-300 group-hover:opacity-100" />
-
-        {/* larger, bolder preview */}
-        <div className="relative h-60 overflow-hidden border-b border-glass-border bg-bg-deep">
-          <div className="dot-pattern absolute inset-0 opacity-30" aria-hidden="true" />
-          <div className="absolute inset-0 flex items-center justify-center p-6 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]">
-            <ProjectDiagram type={project.diagram} />
-          </div>
-          <div className="absolute inset-0 flex items-end justify-start bg-gradient-to-t from-bg-deep/90 via-transparent p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-text-primary">
-              View Project
-              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
-                <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </span>
-          </div>
+    <div className="relative">
+      {showDivider && (
+        <div className="mx-auto max-w-7xl px-5 sm:px-8">
+          {/* thin diagonal blade divider between chapters */}
+          <div
+            className="h-px w-full bg-gradient-to-r from-transparent via-accent/40 to-transparent"
+            style={{ transform: "skewY(-0.6deg)" }}
+            aria-hidden="true"
+          />
         </div>
+      )}
 
-        {/* service-colored tag bar */}
-        <div className="h-0.5 w-full bg-gradient-to-r from-accent to-accent-bright/30" />
-
-        <div className="flex flex-1 flex-col p-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-accent">
-              {project.tag}
-            </span>
-            {project.rtl && (
-              <span className="rounded-full border border-glass-border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.12em] text-text-secondary">
-                Arabic-first · RTL
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 py-16 sm:px-8 lg:grid-cols-12 lg:gap-14 lg:py-24">
+        {/* VISUAL */}
+        <Reveal
+          as="div"
+          direction="up"
+          className={`lg:col-span-7 ${flip ? "lg:order-2" : "lg:order-1"}`}
+        >
+          <a
+            href="/work"
+            className="group relative block overflow-hidden rounded-[8px]"
+            aria-label={`${project.name} — view project`}
+          >
+            <div className="panel panel-hover blade-br relative flex h-[300px] items-center justify-center overflow-hidden p-8 sm:h-[380px]">
+              <div className="dot-pattern absolute inset-0 opacity-30" aria-hidden="true" />
+              <div className="absolute left-4 top-4 font-mono text-[10px] uppercase tracking-[0.18em] text-text-secondary/70">
+                {`// ${DIAGRAM_CAPTION[project.diagram]}`}
+              </div>
+              <div className="relative h-full w-full max-w-[520px] transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]">
+                <ProjectDiagram type={project.diagram} />
+              </div>
+              <span className="absolute bottom-4 right-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] text-text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                View Project
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
-            )}
-          </div>
+            </div>
+          </a>
+        </Reveal>
 
-          <h3 className="mt-3 font-display text-2xl font-bold tracking-tight text-text-primary">
-            {project.name}
-          </h3>
-          <p className="mt-2 font-display text-[15px] font-medium leading-snug text-text-primary">
-            {project.headline}
-          </p>
-          {project.summary && (
-            <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-              {project.summary}
+        {/* STORY */}
+        <div className={`lg:col-span-5 ${flip ? "lg:order-1" : "lg:order-2"}`}>
+          <Reveal direction="up">
+            <p className="font-mono text-xs uppercase tracking-[0.22em] text-accent">
+              {`WORK / 0${index}`}
             </p>
-          )}
+            <h3 className="mt-4 font-display text-[clamp(2rem,3.4vw,2.75rem)] font-bold leading-[1.02] tracking-[-0.01em] text-text-primary">
+              {project.name}
+            </h3>
+            <p className="mt-4 font-display text-lg font-medium leading-snug text-text-primary">
+              {project.headline}
+            </p>
+            {project.summary && (
+              <p className="mt-3 max-w-md text-sm leading-relaxed text-text-secondary">
+                {project.summary}
+              </p>
+            )}
 
-          <ul className="mt-5 flex flex-wrap gap-2">
-            {project.tags.map((t) => (
-              <li
-                key={t}
-                className="rounded-[6px] border border-glass-border bg-bg-deep/60 px-2.5 py-1 text-[11px] text-text-secondary"
-              >
-                {t}
-              </li>
-            ))}
-          </ul>
-
-          {project.quote && (
-            <figure className="mt-auto pt-6">
-              <blockquote className="border-l-2 border-accent pl-4 text-sm leading-relaxed text-text-secondary/90">
-                {project.quote}
-              </blockquote>
-              {project.quoteAttribution && (
-                <figcaption className="mt-3 pl-4 font-mono text-[11px] uppercase tracking-[0.14em] text-text-secondary">
-                  {project.quoteAttribution}
-                </figcaption>
+            <ul className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[11px] uppercase tracking-[0.12em] text-text-secondary">
+              {project.tags.slice(0, 4).map((t) => (
+                <li key={t} className="flex items-center gap-2">
+                  <span className="h-1 w-1 bg-accent" aria-hidden="true" />
+                  {t}
+                </li>
+              ))}
+              {project.rtl && (
+                <li className="rounded-full border border-glass-border px-2.5 py-0.5 normal-case tracking-[0.12em] text-text-secondary">
+                  Arabic-first · RTL
+                </li>
               )}
-            </figure>
-          )}
+            </ul>
+
+            {project.quote && (
+              <figure className="mt-8 border-t border-line pt-6">
+                <blockquote className="border-l-2 border-accent pl-4 text-sm leading-relaxed text-text-primary/90">
+                  {project.quote}
+                </blockquote>
+                {project.quoteAttribution && (
+                  <figcaption className="mt-3 pl-4 font-mono text-[11px] uppercase tracking-[0.14em] text-text-secondary">
+                    {project.quoteAttribution}
+                  </figcaption>
+                )}
+              </figure>
+            )}
+          </Reveal>
         </div>
-      </article>
-    </Reveal>
+      </div>
+    </div>
   );
 }

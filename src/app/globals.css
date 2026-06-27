@@ -1,0 +1,254 @@
+@import "tailwindcss";
+
+/*
+  AXIOM — "Controlled Infrastructure" design tokens.
+  Dark-only. Contrast comes from depth, glow, and type weight.
+*/
+
+@theme {
+  /* Surfaces */
+  --color-bg-primary: #0d1628;
+  --color-bg-deep: #080e1a;
+  --color-bg-alt: #0f1a2e;
+
+  /* Text */
+  --color-text-primary: #f0f4ff;
+  --color-text-secondary: #8a9bbc;
+
+  /* Brand blue — the signal */
+  --color-accent: #3b6ef5;
+  --color-accent-bright: #5b8cff;
+  --color-accent-dim: #3b4a60;
+
+  /* Architectural lines & glass */
+  --color-line: rgba(255, 255, 255, 0.1);
+  --color-glass: rgba(255, 255, 255, 0.04);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Typography */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Motion — mechanical-but-smooth precision instrument */
+  --ease-axiom: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-axiom-in: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Max card radius is 12px — never softer */
+  --radius-card: 12px;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: rgba(59, 110, 245, 0.35);
+  color: var(--color-text-primary);
+}
+
+/* Visible keyboard focus — never remove without replacement */
+:focus-visible {
+  outline: 2px solid var(--color-accent-bright);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Custom thin scrollbar that fits the dark canvas */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(138, 155, 188, 0.25);
+  border-radius: 999px;
+  border: 2px solid var(--color-bg-deep);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(138, 155, 188, 0.4);
+}
+
+/* ---------------------------------------------------------------- */
+/* Reusable utilities                                               */
+/* ---------------------------------------------------------------- */
+
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+/* The single approved gradient: deep navy -> electric blue, BL -> TR */
+.axiom-gradient {
+  background-image: linear-gradient(
+    to top right,
+    var(--color-bg-deep) 0%,
+    #15264a 45%,
+    var(--color-accent) 100%
+  );
+}
+
+.text-gradient {
+  background-image: linear-gradient(
+    to top right,
+    var(--color-text-secondary) 0%,
+    var(--color-text-primary) 55%,
+    var(--color-accent-bright) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Faint dotted/grid pattern for dense sections */
+.grid-pattern {
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+}
+
+.dot-pattern {
+  background-image: radial-gradient(
+    var(--color-line) 1px,
+    transparent 1px
+  );
+  background-size: 28px 28px;
+}
+
+/* ---------------------------------------------------------------- */
+/* Keyframes                                                        */
+/* ---------------------------------------------------------------- */
+
+/* Logomark node pulse — every ~8s, the brand is alive */
+@keyframes node-pulse {
+  0%,
+  88%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(91, 140, 255, 0.55);
+    transform: scale(1);
+  }
+  92% {
+    box-shadow: 0 0 0 6px rgba(91, 140, 255, 0);
+    transform: scale(1.35);
+  }
+}
+
+.node-pulse {
+  animation: node-pulse 8s var(--ease-axiom) infinite;
+}
+
+/* Scroll indicator dot descending */
+@keyframes scroll-dot {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(26px);
+    opacity: 0;
+  }
+}
+
+/* Slow background pulse for the final-CTA runway */
+@keyframes runway-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* Animated border-trace for primary CTAs — a light point travels the perimeter */
+@keyframes cta-trace {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+
+.cta-trace-line {
+  stroke-dasharray: 18 182;
+  stroke-dashoffset: 0;
+  animation: cta-trace 3.2s linear infinite;
+}
+
+/* Self-drawing schematic strokes inside service cards.
+   Driven by the card's `.group:hover` so the line traces on hover. */
+.schematic-line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 700ms var(--ease-axiom);
+}
+.group:hover .schematic-line {
+  stroke-dashoffset: 0;
+}
+.schematic-dot {
+  opacity: 0;
+  transition: opacity 300ms var(--ease-axiom);
+}
+.group:hover .schematic-dot {
+  opacity: 1;
+}
+
+/* Horizontal scanner sweep across testimonial card */
+@keyframes scan-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Reduced motion — replace movement with instant/simple fades      */
+/* ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

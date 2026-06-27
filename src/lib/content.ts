@@ -59,7 +59,10 @@ export type Project = {
   name: string;
   tag: string;
   diagram: "transformation" | "commerce" | "procurement";
-  line: string;
+  /** Bold one-line problem statement. */
+  headline: string;
+  /** Short supporting line (~2 lines max). */
+  summary?: string;
   tags: string[];
   rtl?: boolean;
   owner?: string;
@@ -73,7 +76,9 @@ export const PROJECTS: Project[] = [
     name: "Prospect Engine",
     tag: "SaaS / Product",
     diagram: "transformation",
-    line: "A spreadsheet-run service, rebuilt as a scalable software product.",
+    headline: "A spreadsheet-run service, rebuilt as a scalable software product.",
+    summary:
+      "Product strategy, workflow analysis, and a scalable architecture built around how the business actually runs.",
     tags: [
       "Product Strategy",
       "Workflow Analysis",
@@ -88,7 +93,9 @@ export const PROJECTS: Project[] = [
     diagram: "commerce",
     rtl: true,
     owner: "Mohammed Al-Khatib",
-    line: "Group import operations, rebuilt as a platform. A full-stack group-import operating system for Saudi collective sourcing — trader campaigns, staff portals, installment payments, subscriptions, referrals, and operational automation.",
+    headline: "Group import operations, rebuilt as a platform.",
+    summary:
+      "A full-stack group-import operating system for Saudi collective sourcing — trader campaigns, staff portals, installment payments, and operational automation.",
     tags: [
       "Commerce Infrastructure",
       "Multi-role Portals",
@@ -106,7 +113,9 @@ export const PROJECTS: Project[] = [
     diagram: "procurement",
     rtl: true,
     owner: "Mohammed Al Alas",
-    line: "B2B procurement, RFQs, contracts, and funding workflows. An Arabic-first B2B procurement platform for advertisers and vendors — RFQs, vendor discovery, offer comparison, contracts, tranche funding, disputes, and operations governance.",
+    headline: "B2B procurement, RFQs, contracts, and funding workflows.",
+    summary:
+      "An Arabic-first B2B platform for advertisers and vendors — vendor discovery, offer comparison, contracts, tranche funding, and disputes.",
     tags: [
       "B2B Marketplace",
       "RFQ Workflows",

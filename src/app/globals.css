@@ -20,10 +20,11 @@
   --color-accent-bright: #5b8cff;
   --color-accent-dim: #3b4a60;
 
-  /* Architectural lines & glass */
-  --color-line: rgba(255, 255, 255, 0.1);
-  --color-glass: rgba(255, 255, 255, 0.04);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
+  /* Architectural lines & glass — brighter for real panel depth */
+  --color-line: rgba(255, 255, 255, 0.12);
+  --color-glass: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.12);
+  --color-card: rgba(255, 255, 255, 0.045);
 
   /* Typography */
   --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -34,8 +35,8 @@
   --ease-axiom: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-axiom-in: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Max card radius is 12px — never softer */
-  --radius-card: 12px;
+  /* Sharper read — cut, not rounded */
+  --radius-card: 8px;
 }
 
 :root {
@@ -116,16 +117,85 @@ body {
   );
 }
 
-.text-gradient {
-  background-image: linear-gradient(
-    to top right,
-    var(--color-text-secondary) 0%,
-    var(--color-text-primary) 55%,
-    var(--color-accent-bright) 100%
+/* Panel surface — a real command-center panel with a top-edge highlight,
+   not a flat outline. Separates clearly from the section background. */
+.panel {
+  position: relative;
+  background-color: var(--color-card);
+  border: 1px solid var(--color-glass-border);
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 1px 0 0 rgba(0, 0, 0, 0.25);
+}
+.panel-hover {
+  transition:
+    transform 400ms var(--ease-axiom),
+    border-color 300ms var(--ease-axiom),
+    box-shadow 400ms var(--ease-axiom);
+}
+.panel-hover:hover {
+  border-color: var(--color-accent);
+  box-shadow:
+    inset 0 1px 0 0 rgba(91, 140, 255, 0.25),
+    0 0 0 1px rgba(59, 110, 245, 0.35),
+    0 24px 60px -24px rgba(59, 110, 245, 0.55);
+}
+
+/* Blade motif — a single angular diagonal corner cut, pulled from the
+   logomark's blade. Size via --blade. */
+.blade-tr {
+  --blade: 20px;
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--blade)) 0,
+    100% var(--blade),
+    100% 100%,
+    0 100%
   );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+}
+.blade-br {
+  --blade: 20px;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--blade)),
+    calc(100% - var(--blade)) 100%,
+    0 100%
+  );
+}
+.blade-bl {
+  --blade: 20px;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    var(--blade) 100%,
+    0 calc(100% - var(--blade))
+  );
+}
+
+/* Small filled blade chip — a sharp angular accent marker */
+.blade-chip {
+  clip-path: polygon(0 0, 100% 0, 100% 65%, 65% 100%, 0 100%);
+}
+
+/* Bold filled primary CTA — electric blue with outer glow */
+.cta-primary {
+  background-color: var(--color-accent);
+  color: var(--color-text-primary);
+  box-shadow:
+    0 0 0 1px rgba(91, 140, 255, 0.4),
+    0 8px 30px rgba(59, 110, 245, 0.35);
+  transition:
+    transform 300ms var(--ease-axiom),
+    background-color 300ms var(--ease-axiom),
+    box-shadow 300ms var(--ease-axiom);
+}
+.cta-primary:hover {
+  background-color: var(--color-accent-bright);
+  box-shadow:
+    0 0 0 1px rgba(91, 140, 255, 0.7),
+    0 12px 44px rgba(59, 110, 245, 0.55);
 }
 
 /* Faint dotted/grid pattern for dense sections */
@@ -207,22 +277,87 @@ body {
   animation: cta-trace 3.2s linear infinite;
 }
 
-/* Self-drawing schematic strokes inside service cards.
-   Driven by the card's `.group:hover` so the line traces on hover. */
+/* Service-card schematics: visible-but-quiet at rest (~30%), then trace +
+   brighten on hover so the card never looks unfinished. */
 .schematic-line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 700ms var(--ease-axiom);
+  opacity: 0.32;
+  transition:
+    opacity 500ms var(--ease-axiom),
+    stroke-dashoffset 700ms var(--ease-axiom);
 }
 .group:hover .schematic-line {
+  opacity: 1;
   stroke-dashoffset: 0;
 }
 .schematic-dot {
-  opacity: 0;
-  transition: opacity 300ms var(--ease-axiom);
+  opacity: 0.25;
+  transition: opacity 400ms var(--ease-axiom);
 }
 .group:hover .schematic-dot {
   opacity: 1;
+}
+
+/* Data-in-motion: a pulse traveling along the process line */
+@keyframes data-pulse {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+/* HUD scroll-progress line at the very top of the viewport */
+.hud-progress {
+  transform-origin: left center;
+}
+
+/* A pulse traveling along the process timeline (data-in-motion) */
+@keyframes pulse-travel {
+  0% {
+    left: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+.pulse-travel {
+  animation: pulse-travel 4.5s var(--ease-axiom) infinite;
+}
+@keyframes pulse-travel-y {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+.pulse-travel-y {
+  animation: pulse-travel-y 4.5s var(--ease-axiom) infinite;
 }
 
 /* Horizontal scanner sweep across testimonial card */

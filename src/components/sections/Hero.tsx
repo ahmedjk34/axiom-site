@@ -12,10 +12,11 @@ import { PerspectiveGrid } from "../visuals/PerspectiveGrid";
 import { AxiomMark } from "../ui/Logo";
 import { PrimaryCta, SecondaryLink } from "../ui/CtaButton";
 
-const HEADLINE_LINES = [
-  ["Software,", "AI,", "and"],
-  ["automation", "built"],
-  ["around", "your", "business."],
+// Tight 2–3 line break; "automation" is the single deliberate blue hit.
+const HEADLINE_LINES: { word: string; accent?: boolean }[][] = [
+  [{ word: "Software," }, { word: "AI," }, { word: "and" }],
+  [{ word: "automation", accent: true }, { word: "built" }, { word: "around" }],
+  [{ word: "your" }, { word: "business." }],
 ];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -29,8 +30,7 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
 
-  // Scroll-out: the sensation of entering the system.
-  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
+  const contentScale = useTransform(scrollYProgress, [0, 1], [1, 0.9]);
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -60]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const networkY = useTransform(scrollYProgress, [0, 1], [0, -120]);
@@ -44,12 +44,12 @@ export function Hero() {
       id="top"
       className="relative flex min-h-[100svh] items-center overflow-hidden bg-bg-primary"
     >
-      {/* Layer 2: node network */}
+      {/* Layer 2: living node network */}
       <motion.div
         className="absolute inset-0"
         style={reduce ? undefined : { y: networkY }}
       >
-        <NodeNetwork interactive density={1} intensity={1} />
+        <NodeNetwork interactive density={1.25} intensity={1.35} />
       </motion.div>
 
       {/* Layer 3: perspective grid floor */}
@@ -60,23 +60,23 @@ export function Hero() {
         <PerspectiveGrid />
       </motion.div>
 
-      {/* Layer 4: ghost triangle mark behind the headline */}
+      {/* Layer 4: crisp line-mark, offset to the right (not behind the text) */}
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 -z-0 -translate-x-1/2 -translate-y-1/2"
+        className="pointer-events-none absolute right-[-6%] top-1/2 hidden -translate-y-1/2 lg:block"
         aria-hidden="true"
       >
         <AxiomMark
-          className="h-[min(70vw,640px)] w-[min(70vw,640px)] opacity-[0.04]"
+          className="h-[min(46vw,560px)] w-[min(46vw,560px)] opacity-[0.07]"
           pulse={false}
         />
       </div>
 
       {/* Layer 5: directional blue glow from top-right */}
       <div
-        className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full opacity-60 blur-[120px]"
+        className="pointer-events-none absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-70 blur-[120px]"
         style={{
           background:
-            "radial-gradient(circle, rgba(59,110,245,0.35) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(59,110,245,0.4) 0%, transparent 70%)",
         }}
         aria-hidden="true"
       />
@@ -90,28 +90,33 @@ export function Hero() {
             : { scale: contentScale, y: contentY, opacity: contentOpacity }
         }
       >
-        <div className="max-w-4xl">
-          <motion.p
-            className="eyebrow mb-6 flex items-center gap-2"
+        <div className="relative max-w-3xl">
+          {/* HUD eyebrow row: studio mark left, technical readout right */}
+          <motion.div
+            className="mb-7 flex items-center gap-3"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASE, delay: 0.1 }}
           >
-            <span className="inline-block h-px w-6 bg-accent/60" />
-            {"// TECHNOLOGY SOLUTIONS STUDIO"}
-          </motion.p>
+            <span className="blade-chip h-4 w-4 shrink-0 bg-accent" aria-hidden="true" />
+            <div className="flex flex-1 items-center justify-between gap-4">
+              <p className="eyebrow">{"// TECHNOLOGY SOLUTIONS STUDIO"}</p>
+              <p className="hidden font-mono text-[10px] uppercase tracking-[0.18em] text-text-secondary/70 sm:block">
+                [ AX-01 ] · 32.4°N 35.3°E
+              </p>
+            </div>
+          </motion.div>
 
-          <h1 className="font-display text-[clamp(2.6rem,8vw,6rem)] font-bold leading-[1.02] tracking-[0.01em] text-text-primary">
+          <h1 className="font-display text-[clamp(2.9rem,9vw,6.5rem)] font-bold leading-[0.98] tracking-[-0.01em] text-text-primary">
             {HEADLINE_LINES.map((line, li) => (
-              <span key={li} className="block overflow-hidden">
-                {line.map((word) => {
+              <span key={li} className="block overflow-hidden pb-[0.06em]">
+                {line.map(({ word, accent }) => {
                   const i = wordIndex++;
-                  const isLast = li === HEADLINE_LINES.length - 1;
                   return (
                     <motion.span
                       key={word + i}
                       className={`mr-[0.25em] inline-block ${
-                        isLast ? "text-gradient" : ""
+                        accent ? "text-accent" : ""
                       }`}
                       initial={
                         reduce
@@ -120,9 +125,9 @@ export function Hero() {
                       }
                       animate={{ opacity: 1, y: 0, rotateX: 0 }}
                       transition={{
-                        duration: reduce ? 0.3 : 0.85,
+                        duration: reduce ? 0.3 : 0.7,
                         ease: EASE,
-                        delay: reduce ? 0 : 0.35 + i * 0.085,
+                        delay: reduce ? 0 : 0.3 + i * 0.07,
                       }}
                     >
                       {word}
@@ -137,7 +142,7 @@ export function Hero() {
             className="mt-7 max-w-xl text-base leading-relaxed text-text-secondary sm:text-lg"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE, delay: reduce ? 0.1 : 1.5 }}
+            transition={{ duration: 0.7, ease: EASE, delay: reduce ? 0.1 : 1.3 }}
           >
             Axiom helps businesses turn complex workflows, manual processes, and
             product ideas into reliable digital systems that save time, reduce
@@ -148,7 +153,7 @@ export function Hero() {
             className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE, delay: reduce ? 0.15 : 1.7 }}
+            transition={{ duration: 0.7, ease: EASE, delay: reduce ? 0.15 : 1.5 }}
           >
             <PrimaryCta href="#contact" size="lg">
               Start a Project
@@ -163,7 +168,7 @@ export function Hero() {
         className="absolute bottom-7 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: reduce ? 0.2 : 2 }}
+        transition={{ duration: 0.8, delay: reduce ? 0.2 : 1.8 }}
         aria-hidden="true"
       >
         <div className="relative h-10 w-px overflow-hidden bg-line">

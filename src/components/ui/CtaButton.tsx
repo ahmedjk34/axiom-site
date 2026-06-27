@@ -12,7 +12,7 @@ import type { ReactNode } from "react";
 type PrimaryProps = {
   href: string;
   children: ReactNode;
-  size?: "md" | "lg";
+  size?: "md" | "lg" | "xl";
   className?: string;
   ariaLabel?: string;
 };
@@ -74,7 +74,12 @@ export function PrimaryCta({
     };
   }, [reduce, x, y]);
 
-  const pad = size === "lg" ? "px-9 py-4 text-base" : "px-6 py-3 text-sm";
+  const pad =
+    size === "xl"
+      ? "px-11 py-5 text-lg"
+      : size === "lg"
+        ? "px-8 py-4 text-base"
+        : "px-6 py-3 text-sm";
 
   return (
     <motion.a
@@ -82,40 +87,27 @@ export function PrimaryCta({
       href={href}
       aria-label={ariaLabel}
       style={reduce ? undefined : { x: sx, y: sy }}
-      className={`group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-[10px] font-medium text-text-primary transition-[box-shadow,transform] duration-300 ${pad} ${className}`}
+      className={`cta-primary group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-[8px] font-semibold tracking-tight will-change-transform hover:-translate-y-0.5 ${pad} ${className}`}
     >
-      {/* Resting + hover fill */}
-      <span className="absolute inset-0 -z-10 bg-glass" />
-      <span className="axiom-gradient absolute inset-0 -z-10 opacity-0 transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100" />
-
-      {/* Animated perimeter light-trace */}
+      {/* Animated perimeter light-trace — bright highlight over the fill */}
       <svg
         className="pointer-events-none absolute inset-[1px] h-[calc(100%-2px)] w-[calc(100%-2px)]"
         aria-hidden="true"
         preserveAspectRatio="none"
       >
         <rect
-          x="0"
-          y="0"
-          width="100%"
-          height="100%"
-          rx="9"
-          fill="none"
-          stroke="var(--color-glass-border)"
-          strokeWidth="1"
-        />
-        <rect
           className="cta-trace-line"
           x="0"
           y="0"
           width="100%"
           height="100%"
-          rx="9"
+          rx="7"
           pathLength={200}
           fill="none"
-          stroke="var(--color-accent-bright)"
-          strokeWidth="1.5"
+          stroke="#ffffff"
+          strokeWidth="2"
           strokeLinecap="round"
+          opacity="0.9"
         />
       </svg>
 

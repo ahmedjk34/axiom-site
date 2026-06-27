@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import { Eyebrow } from "../ui/Eyebrow";
+import { SectionIndex } from "../ui/SectionIndex";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -24,6 +25,9 @@ export function Testimonial() {
       />
 
       <div className="relative mx-auto max-w-5xl px-5 text-center sm:px-8">
+        <div className="absolute right-5 top-0 sm:right-8">
+          <SectionIndex n={4} />
+        </div>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -33,16 +37,16 @@ export function Testimonial() {
           <Eyebrow className="mb-6 justify-center">{"// CLIENT STORY"}</Eyebrow>
           <h2
             id="testimonial-heading"
-            className="mx-auto max-w-3xl font-display text-[clamp(1.9rem,4.2vw,3.1rem)] font-bold leading-[1.1] tracking-tight text-text-primary text-balance"
+            className="mx-auto max-w-3xl font-display text-[clamp(1.95rem,4.4vw,3.2rem)] font-bold leading-[1.08] tracking-[-0.01em] text-text-primary text-balance"
           >
             From Google Sheets to a{" "}
-            <span className="text-gradient">$4M valuation.</span>
+            <span className="text-accent">$4M valuation.</span>
           </h2>
         </motion.div>
 
         {/* quote card */}
         <motion.figure
-          className="group relative mx-auto mt-12 w-full max-w-3xl overflow-hidden rounded-[12px] border border-glass-border bg-glass p-8 text-left backdrop-blur-sm sm:p-12"
+          className="panel blade-tr group relative mx-auto mt-12 w-full max-w-3xl overflow-hidden rounded-[8px] p-8 text-left backdrop-blur-sm sm:p-12"
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}

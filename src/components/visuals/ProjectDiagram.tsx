@@ -68,9 +68,9 @@ export function ProjectDiagram({ type }: { type: Project["diagram"] }) {
               <path
                 d={`M300 110 L${x} ${y}`}
                 stroke={node}
-                strokeWidth="1.2"
+                strokeWidth="1.8"
               />
-              <circle cx={x} cy={y} r="6" fill={nodeBright} />
+              <circle cx={x} cy={y} r="7" fill={nodeBright} />
             </g>
           ))}
         </>
@@ -121,8 +121,8 @@ export function ProjectDiagram({ type }: { type: Project["diagram"] }) {
               <path
                 d={`M${p.x + 37} ${p.y < 110 ? p.y + 30 : p.y} L200 110`}
                 stroke={node}
-                strokeWidth="1"
-                opacity="0.7"
+                strokeWidth="1.5"
+                opacity="0.85"
               />
             </g>
           ))}
@@ -178,7 +178,7 @@ export function ProjectDiagram({ type }: { type: Project["diagram"] }) {
                 <path
                   d={`M${s.x + 48} 110 H${arr[i + 1].x}`}
                   stroke={node}
-                  strokeWidth="1.2"
+                  strokeWidth="1.8"
                 />
               )}
             </g>

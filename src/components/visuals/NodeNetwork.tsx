@@ -59,20 +59,20 @@ export function NodeNetwork({
     let traces: Trace[] = [];
     let raf = 0;
     let running = false;
-    const linkDist = 170;
+    const linkDist = 185;
     const pointer = { x: -9999, y: -9999, active: false };
 
     const buildNodes = () => {
-      // Cap node count; scale with area but keep it sparse.
+      // Cap node count; scale with area. Denser + more alive than before.
       const target = Math.round(
-        Math.min(46, Math.max(14, (width * height) / 38000) * density)
+        Math.min(64, Math.max(18, (width * height) / 28000) * density)
       );
       nodes = Array.from({ length: target }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.12,
-        vy: (Math.random() - 0.5) * 0.12,
-        r: 1.2 + Math.random() * 1.6,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.18,
+        r: 1.3 + Math.random() * 1.8,
         phase: Math.random() * Math.PI * 2,
       }));
       traces = [];
@@ -90,7 +90,7 @@ export function NodeNetwork({
     };
 
     const spawnTrace = () => {
-      if (nodes.length < 2 || traces.length > 5) return;
+      if (nodes.length < 2 || traces.length > 9) return;
       const a = Math.floor(Math.random() * nodes.length);
       let b = Math.floor(Math.random() * nodes.length);
       if (b === a) b = (b + 1) % nodes.length;
@@ -98,7 +98,7 @@ export function NodeNetwork({
       const dx = nodes[a].x - nodes[b].x;
       const dy = nodes[a].y - nodes[b].y;
       if (Math.hypot(dx, dy) > linkDist * 1.6) return;
-      traces.push({ a, b, t: 0, speed: 0.006 + Math.random() * 0.01 });
+      traces.push({ a, b, t: 0, speed: 0.012 + Math.random() * 0.016 });
     };
 
     let frame = 0;
@@ -106,8 +106,8 @@ export function NodeNetwork({
       ctx.clearRect(0, 0, width, height);
       frame++;
 
-      // occasionally emit a light trace
-      if (frame % 42 === 0) spawnTrace();
+      // emit light traces frequently so the field reads as alive
+      if (frame % 18 === 0) spawnTrace();
 
       // update + draw connection lines
       for (let i = 0; i < nodes.length; i++) {
@@ -115,13 +115,13 @@ export function NodeNetwork({
         n.x += n.vx;
         n.y += n.vy;
 
-        // gentle cursor field (attraction within radius)
+        // cursor field — a clearly felt disturbance (repulsion) near the pointer
         if (interactive && pointer.active) {
-          const dx = pointer.x - n.x;
-          const dy = pointer.y - n.y;
+          const dx = n.x - pointer.x;
+          const dy = n.y - pointer.y;
           const d = Math.hypot(dx, dy);
-          if (d < 150 && d > 0.01) {
-            const f = (1 - d / 150) * 0.25;
+          if (d < 190 && d > 0.01) {
+            const f = (1 - d / 190) * 1.4;
             n.x += (dx / d) * f;
             n.y += (dy / d) * f;
           }
@@ -142,8 +142,10 @@ export function NodeNetwork({
           const dy = a.y - b.y;
           const dist = Math.hypot(dx, dy);
           if (dist < linkDist) {
-            const alpha = (1 - dist / linkDist) * 0.16 * intensity;
-            ctx.strokeStyle = `rgba(138, 155, 188, ${alpha})`;
+            const f = 1 - dist / linkDist;
+            // brighter links that shift toward blue as nodes get closer
+            const alpha = f * 0.3 * intensity;
+            ctx.strokeStyle = `rgba(${91 + (1 - f) * 47}, ${140 + (1 - f) * 15}, 255, ${alpha})`;
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
